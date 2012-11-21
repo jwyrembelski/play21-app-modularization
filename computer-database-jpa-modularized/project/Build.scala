@@ -20,11 +20,17 @@ object ApplicationBuild extends Build {
     ebeanEnabled := false
   )
 
-  val main = play.Project(appName, appVersion, appDependencies).settings(
+  val site = play.Project(
+    appName + "-site", appVersion, appDependencies, path = file("modules/site")
   ).dependsOn(
     model
+  )
+
+  val main = play.Project(appName, appVersion, appDependencies).settings(
+  ).dependsOn(
+    model, site
   ).aggregate( 
-    model 
+    model, site
   )
 
 }

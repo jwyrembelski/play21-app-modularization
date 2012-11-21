@@ -140,3 +140,35 @@ Moving
 
 up does the trick. The tests now pass. It seems logical that nothing in the sub-project's application.conf files will be used by the project, so I delete the file entirely.
 
+## 4) Install the site module
+Setup the new module
+
+	cd $PROJECT_HOME/computer-database-jpa-modularized/modules/
+	play new site
+	rm -rf README conf/routes conf/application.conf app/* test/* public/* project
+
+Install the necessary bits from the sample
+
+	rsync -va $PLAY_HOME/samples/java/computer-database-jpa/app/views app/
+	rsync -va $PLAY_HOME/samples/java/computer-database-jpa/app/controllers app/
+	rsync -va $PLAY_HOME/samples/java/computer-database-jpa/test/FunctionalTest.java test/
+	rsync -va $PLAY_HOME/samples/java/computer-database-jpa/test/IntegrationTest.java test/
+
+Edit **project/Build.scala** by adding a definition for the site module
+
+	  val site = play.Project(
+	    appName + "-site", appVersion, appDependencies, path = 	file("modules/site")
+	  ).dependsOn(
+	    model
+	  )
+
+and adding the site module to the project dependencies 
+
+	  val main = play.Project(appName, appVersion, 	appDependencies).settings(
+	  ).dependsOn(
+	    model, site
+	  ).aggregate( 
+	    model, site
+	  )
+
+That was easy!
